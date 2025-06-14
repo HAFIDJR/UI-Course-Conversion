@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+from conversionData import conversionData
+
 
 # Custom CSS for modern green theme with beautiful table designs
 st.markdown(
@@ -263,7 +265,6 @@ if "uploaded_file" not in st.session_state:
 def create_sample_results():
     """Create sample data for demonstration"""
     sample_data = {
-        "Kode MK": ["CS101", "CS102", "CS201", "CS202", "CS301"],
         "Nama Mata Kuliah": [
             "Algoritma dan Pemrograman I",
             "Matematika Diskrit",
@@ -293,7 +294,7 @@ def display_conversion_results():
     )
 
     # Create sample data
-    df = create_sample_results()
+    df =  conversionData(st.session_state.input_text)
 
     # Display metrics
     col1, col2, col3 = st.columns(3)
@@ -405,6 +406,7 @@ if input_mode == "📄 Deskripsi Teks":
 
         if submit_text:
             if text_input.strip():
+               
                 st.session_state.input_text = text_input
                 st.session_state.text_submitted = True
                 st.session_state.file_submitted = False
@@ -442,7 +444,7 @@ st.markdown("---")
 
 # Display results based on submission
 if st.session_state.text_submitted and st.session_state.input_text:
-    st.success("✅ Deskripsi berhasil diterima dan sedang diproses!")
+    st.success("✅ Deskripsi berhasil diterima")
 
     with st.expander("📋 Lihat Deskripsi yang Dimasukkan", expanded=False):
         st.write(st.session_state.input_text)
