@@ -10,8 +10,10 @@ dataset_path = "data_embding.xlsx"
 dataset = pd.read_excel(dataset_path)
 
 
-def conversionData(text_silabus):
-    df_konversi = pd.DataFrame(columns=["subject", "sks", "similarity_score"])
+def conversionData(text_silabus, judul_silabus):
+    df_konversi = pd.DataFrame(
+        columns=["subject", "sks", "semester", "similarity_score"]
+    )
     embedding_silabus = get_embedding_verbose(text_silabus)["embedding"]
     for i in range(len(dataset)):
 
@@ -30,11 +32,20 @@ def conversionData(text_silabus):
                             {
                                 "subject": [dataset.at[i, "subject"]],
                                 "sks": [dataset.at[i, "sks"]],
+                                "semester": [dataset.at[i, "semester"]],
                                 "similarity_score": [similarity_score],
+                                "Mata Kuliah Tujuan": [judul_silabus],
                             }
                         ),
                     ],
                     ignore_index=True,
                 )
 
-    return df_konversi.sort_values(by="similarity_score", ascending=False)
+    # Filter: Ambil hanya subject dengan similarity_score tertinggi
+    df_konversi = (
+        df_konversi.loc[df_konversi.groupby("subject")["similarity_score"].idxmax()]
+        .sort_values(by="similarity_score", ascending=False)
+        .reset_index(drop=True)
+    )
+
+    return df_konversi
